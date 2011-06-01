@@ -62,6 +62,9 @@
 (require 'starter-kit-ruby)
 (require 'starter-kit-js)
 
+;; nemo customize
+(require 'open-next-line)
+
 (regen-autoloads)
 (load custom-file 'noerror)
 
