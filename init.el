@@ -64,7 +64,12 @@
 
 ;; nemo customize
 (require 'open-next-line)
+(require 'starter-kit-python)
+(require 'color-theme-zenburn)
+(color-theme-zenburn)
 
+
+;; -----------------------------------------
 (regen-autoloads)
 (load custom-file 'noerror)
 

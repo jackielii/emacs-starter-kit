@@ -91,5 +91,8 @@
 (define-key global-map "\C-cl" 'org-store-link)
 (define-key global-map "\C-ca" 'org-agenda)
 
+;; python bingings nemo
+(define-key global-map "\C-j" 'py-next-block)
+
 (provide 'starter-kit-bindings)
 ;;; starter-kit-bindings.el ends here
