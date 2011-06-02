@@ -164,11 +164,10 @@
   :type 'integer
   :group 'auto-complete)
 
-(defcustom ac-quick-help-prefer-pos-tip t
-  "Prefer native tooltip with pos-tip than overlay popup for displaying quick help."
+(defcustom ac-quick-help-prefer-x t
+  "Prefer X tooltip than overlay popup for displaying quick help."
   :type 'boolean
   :group 'auto-complete)
-(defvaralias 'ac-quick-help-prefer-x 'ac-quick-help-prefer-pos-tip)
 
 (defcustom ac-candidate-limit nil
   "Limit number of candidates. Non-integer means no limit."
@@ -195,12 +194,6 @@
   "^ac-"
   "Regexp to indicate what packages can work with auto-complete."
   :type 'string
-  :group 'auto-complete)
-
-(defcustom ac-non-trigger-commands
-  '(*table--cell-self-insert-command)
-  "Commands that can't be used as triggers of `auto-complete'."
-  :type '(repeat symbol)
   :group 'auto-complete)
 
 (defcustom ac-trigger-commands
@@ -245,7 +238,7 @@ If you specify `nil', never be started automatically."
   :group 'auto-complete)
 (defvaralias 'ac-ignores 'ac-stop-words)
 
-(defcustom ac-use-dictionary-as-stop-words t
+(defcustom ac-use-dictionary-as-stop-words nil
   "Non-nil means a buffer related dictionary will be thought of as stop words."
   :type 'boolean
   :group 'auto-complete)
@@ -1041,10 +1034,9 @@ You can not use it in source definition like (prefix . `NAME')."
 (defun ac-reposition ()
   "Force to redraw candidate menu with current `ac-candidates'."
   (let ((cursor (popup-cursor ac-menu))
-        (scroll-top (popup-scroll-top ac-menu))
-        (height (popup-height ac-menu)))
+        (scroll-top (popup-scroll-top ac-menu)))
     (ac-menu-delete)
-    (ac-menu-create ac-point (popup-preferred-width ac-candidates) height)
+    (ac-menu-create ac-point (popup-preferred-width ac-candidates) (popup-height ac-menu))
     (ac-update-candidates cursor scroll-top)))
 
 (defun ac-cleanup ()
@@ -1251,18 +1243,15 @@ that have been made before in this function."
             (pos-tip-hide))
           t)))))
 
-(defun ac-quick-help-use-pos-tip-p ()
-  (and ac-quick-help-prefer-pos-tip
-       window-system
-       (featurep 'pos-tip)))
-
 (defun ac-quick-help (&optional force)
   (interactive)
   (when (and (or force (null this-command))
              (ac-menu-live-p)
              (null ac-quick-help))
       (setq ac-quick-help
-            (funcall (if (ac-quick-help-use-pos-tip-p)
+            (funcall (if (and ac-quick-help-prefer-x
+                              (eq window-system 'x)
+                              (featurep 'pos-tip))
                          'ac-pos-tip-show-quick-help
                        'popup-menu-show-quick-help)
                      ac-menu nil
@@ -1271,9 +1260,6 @@ that have been made before in this function."
                      :nowait t))))
 
 (defun ac-remove-quick-help ()
-  (when (ac-quick-help-use-pos-tip-p)
-    (with-no-warnings
-      (pos-tip-hide)))
   (when ac-quick-help
     (popup-delete ac-quick-help)
     (setq ac-quick-help nil)))
@@ -1286,7 +1272,9 @@ that have been made before in this function."
     (let ((doc (popup-item-documentation (cdr ac-last-completion)))
           (point (marker-position (car ac-last-completion))))
       (when (stringp doc)
-        (if (ac-quick-help-use-pos-tip-p)
+        (if (and ac-quick-help-prefer-x
+                 (eq window-system 'x)
+                 (featurep 'pos-tip))
             (with-no-warnings (pos-tip-show doc nil point nil 0))
           (popup-tip doc
                      :point point
@@ -1532,7 +1520,6 @@ that have been made before in this function."
 (defun ac-trigger-command-p (command)
   "Return non-nil if `COMMAND' is a trigger command."
   (and (symbolp command)
-       (not (memq command ac-non-trigger-commands))
        (or (memq command ac-trigger-commands)
            (string-match "self-insert-command" (symbol-name command))
            (string-match "electric" (symbol-name command)))))
@@ -1631,14 +1618,6 @@ This workaround avoid flyspell processes when auto completion is being started."
   (interactive)
   (defadvice flyspell-post-command-hook (around ac-flyspell-workaround activate)
     (unless ac-triggered
-      ad-do-it)))
-
-(defun ac-linum-workaround ()
-  "linum-mode tries to display the line numbers even for the
-completion menu. This workaround stops that annoying behavior."
-  (interactive)
-  (defadvice linum-update (around ac-linum-update-workaround activate)
-    (unless ac-completing
       ad-do-it)))
 
 
@@ -1786,8 +1765,6 @@ completion menu. This workaround stops that annoying behavior."
         (princ " is ")
         (cond
          ((fboundp symbol)
-          ;; import help-xref-following
-          (require 'help-mode)
           (let ((help-xref-following t))
             (describe-function-1 symbol))
           (buffer-string))

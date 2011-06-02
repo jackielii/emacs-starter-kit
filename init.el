@@ -67,6 +67,9 @@
 (require 'starter-kit-python)
 (require 'color-theme-zenburn)
 (color-theme-zenburn)
+(global-linum-mode 1)
+(require 'anything-startup)
+(require 'w32-fullscreen)
 
 
 ;; -----------------------------------------

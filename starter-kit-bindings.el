@@ -1,6 +1,14 @@
 ;;; starter-kit-bindings.el --- Set up some handy key bindings
 ;;
 ;; Part of the Emacs Starter Kit.
+;;==================================
+;; nemo 
+;;==================================
+(global-set-key [f11] 'w32-fullscreen)
+(global-set-key [f12] 'other-window)
+(global-set-key [f9] 'split-window-vertically)
+(global-set-key [f10] 'split-window-horizontally)
+;;==================================
 
 ;; You know, like Readline.
 (global-set-key (kbd "C-M-h") 'backward-kill-word)
@@ -18,8 +26,8 @@
 (global-set-key (kbd "C-<f10>") 'menu-bar-mode)
 
 ;; Font size
-(define-key global-map (kbd "C-+") 'text-scale-increase)
-(define-key global-map (kbd "C--") 'text-scale-decrease)
+;(define-key global-map (kbd "C-+") 'text-scale-increase)
+;(define-key global-map (kbd "C--") 'text-scale-decrease)
 
 ;; Use regex searches by default.
 (global-set-key (kbd "C-s") 'isearch-forward-regexp)
