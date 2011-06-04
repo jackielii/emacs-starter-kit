@@ -4,10 +4,13 @@
 ;;==================================
 ;; nemo 
 ;;==================================
+(global-set-key [f8] 'other-window)
+(global-set-key [f9] 'split-window-horizontally)
+(global-set-key [f10] 'split-window-vertically)
 (global-set-key [f11] 'w32-fullscreen)
-(global-set-key [f12] 'other-window)
-(global-set-key [f9] 'split-window-vertically)
-(global-set-key [f10] 'split-window-horizontally)
+(global-set-key [f12] 'speedbar)
+(define-key global-map "\C-j" 'pull-next-line)
+
 ;;==================================
 
 ;; You know, like Readline.
@@ -41,11 +44,14 @@
 ;; File finding
 (global-set-key (kbd "C-x M-f") 'ido-find-file-other-window)
 (global-set-key (kbd "C-x C-M-f") 'find-file-in-project)
-(global-set-key (kbd "C-x f") 'recentf-ido-find-file)
+(global-set-key (kbd "C-x f") 'anything-recentf)
 (global-set-key (kbd "C-c y") 'bury-buffer)
 (global-set-key (kbd "C-c r") 'revert-buffer)
 (global-set-key (kbd "M-`") 'file-cache-minibuffer-complete)
-(global-set-key (kbd "C-x C-b") 'ibuffer)
+(global-set-key (kbd "C-x b") 'anything-buffers+)
+(global-set-key (kbd "C-x C-b") 'ido-switch-buffer)
+(global-set-key (kbd "C-x C-k") 'anything-kill-buffers)
+(global-set-key (kbd "C-M-y") 'anything-show-kill-ring)
 
 ;; Window switching. (C-x o goes to the next window)
 (windmove-default-keybindings) ;; Shift+direction
@@ -99,8 +105,6 @@
 (define-key global-map "\C-cl" 'org-store-link)
 (define-key global-map "\C-ca" 'org-agenda)
 
-;; python bingings nemo
-(define-key global-map "\C-j" 'py-next-block)
 
 (provide 'starter-kit-bindings)
 ;;; starter-kit-bindings.el ends here

@@ -836,7 +836,7 @@ This will be use with `format', so use something like \"wmctrl -xa %s\"."
   (global-set-key (read-kbd-macro anything-command-map-prefix-key)
                   'anything-command-map))
 
-(defcustom anything-command-map-prefix-key "<f5> a"
+(defcustom anything-command-map-prefix-key "<f7>"
   "*The prefix key for all `anything-command-map' commands.
 
 !!WARNING!!
@@ -3953,7 +3953,7 @@ INITIAL-INPUT is a valid path, TEST is a predicate that take one arg."
   (case system-type
     ('gnu/linux "locate -i -r %s")
     ('berkeley-unix "locate -i %s")
-    ('windows-nt "es -i -r %s")
+    ('windows-nt "for \%f in (..\\*) do find \"%s\" \%f") ;;('windows-nt "es -i -r %s")
     (t "locate %s"))
   "A list of arguments for locate program.
 The \"-r\" option must be the last option.")

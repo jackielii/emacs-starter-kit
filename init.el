@@ -66,11 +66,20 @@
 (require 'open-next-line)
 (require 'starter-kit-python)
 (require 'color-theme-zenburn)
-(color-theme-zenburn)
-(global-linum-mode 1)
-(require 'anything-startup)
+(require 'toggle-window-split)
+(require 'anything-config)
 (require 'w32-fullscreen)
+(require 'anything-show-completion)
+(require 'workgroups)
+(setq wg-prefix-key (kbd "C-c w"))
+(workgroups-mode 1)
+(wg-load "~/.emacs.d/.workgroups")
 
+(when (fboundp 'winner-mode)
+  (winner-mode 1))
+
+(color-theme-zenburn)
+(semantic-mode 1)
 
 ;; -----------------------------------------
 (regen-autoloads)
