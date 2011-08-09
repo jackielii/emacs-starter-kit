@@ -24,3 +24,5 @@ history
 snippets/
 .workgroups
 semanticdb/
+.org-id-locations
+ac-comphist.dat
