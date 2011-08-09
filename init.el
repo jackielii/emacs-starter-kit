@@ -81,6 +81,9 @@
 (color-theme-zenburn)
 (semantic-mode 1)
 
+(add-hook 'before-save-hook 'delete-trailing-whitespace)
+
+(require 'goto-last-change)
 ;; -----------------------------------------
 (regen-autoloads)
 (load custom-file 'noerror)
@@ -97,3 +100,4 @@
   (mapc #'load (directory-files user-specific-dir nil ".*el$")))
 
 ;;; init.el ends here
+(put 'narrow-to-region 'disabled nil)

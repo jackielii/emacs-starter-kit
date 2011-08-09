@@ -8,10 +8,13 @@
           '(lambda ()
              (eldoc-mode 1)
              (linum-mode 1)
-             (hl-line-mode 1)) t)
-
-;(require 'ipython)
-
+             (auto-fill-mode 1)
+             (hl-line-mode 1)
+             (hs-minor-mode 1)) t)
+(require 'highlight-indentation)
+(add-hook 'python-mode-hook (lambda () (interactive) (highlight-indentation)))
+(require 'column-marker)
+(add-hook 'python-mode-hook (lambda () (interactive) (column-marker-1 80)))
 (require 'comint)
 (define-key comint-mode-map [(meta p)]
   'comint-previous-matching-input-from-input)
@@ -30,13 +33,17 @@
 ;;=================================
 ;; pycomplete mode
 ;;=================================
-(require 'pycomplete)
 (require 'pymacs)
-(autoload 'pymacs-load "pymacs" nil t)
-(autoload 'pymacs-eval "pymacs" nil t)
-(autoload 'pymacs-apply "pymacs")
-(autoload 'pymacs-call "pymacs")
-(pymacs-load "ropemacs" "rope-")
+(add-hook 'python-mode-hook
+          (lambda ()
+            (require 'pycomplete)
+            (autoload 'pymacs-apply "pymacs")
+            (autoload 'pymacs-call "pymacs")
+            (autoload 'pymacs-eval "pymacs" nil t)
+            (autoload 'pymacs-exec "pymacs" nil t)
+            (autoload 'pymacs-load "pymacs" nil t)
+            (pymacs-load "ropemacs" "rope-")))
+
 (setq ropemacs-enable-autoimport t)
 (setq ropemacs-guess-project t)
 
@@ -64,29 +71,6 @@
 (yas/initialize)
 (yas/load-directory (concat dotfiles-dir "snippets"))
 
-(defun py-complete-list ()
-  (let ((pymacs-forget-mutability t))
-    (if (and (eolp) (not (bolp))
-             (not (char-before-blank))
-             (not (blank-linep)))
-	(let ((py-complete-str
-	       (pycomplete--get-all-completions 
-                 (py-symbol-near-point)
-                 (py-find-global-imports))))
-	  py-complete-str))))
-
-(defvar anything-c-pycomplete-sources
-  '((name . "Buffers")
-    (candidates . py-complete-list )
-    (type . buffer)))
-;; (anything 'anything-c-pycomplete-sources)
-
-(defun anything-pycomplete ()
-  (interactive)
-  (anything-other-buffer
-   '(anything-c-pycomplete-sources)
-   " *pycomplete-anything*"))
-
 
 ;;-----------------------
 ;; useful functions
@@ -96,13 +80,42 @@
   (py-mark-block nil 't)
   (back-to-indentation))
 
-(defun pull-next-line() 
+(defun pull-next-line()
   (interactive)
-  (next-line) 
-  (join-line))
+  (next-line)
+  (join-line)
+  (py-indent-line))
 
+;;========================
+;; auto complete
+(require 'auto-complete-config)
+(add-to-list 'ac-modes 'python-mode)
+(ac-config-default)
+(ac-ropemacs-initialize)
 
+;; (ac-define-source nropemacs
+;;   '((candidates . ac-source-ropemacs)
+;;     (symbol     . "p")))
 
-;;(require 'virtualenv)
+;; (ac-define-source nropemacs-dot
+;;   '((candidates . ac-source-ropemacs)
+;;     (symbol     . "p")
+;;     (prefix     . c-dot)
+;;     (requires   . 0)))
+
+(add-hook 'python-mode-hook
+          (lambda ()
+            (add-to-list 'ac-sources 'ac-source-ropemacs)))
+
+(define-key ac-complete-mode-map "\t" 'ac-expand)
+(define-key ac-complete-mode-map "\r" 'ac-complete)
+
+(ac-set-trigger-key "TAB")
+(setq ac-auto-start nil)
+(define-key ac-completing-map "\C-n" 'ac-next)
+(define-key ac-completing-map "\C-p" 'ac-previous)
+(setq ac-dwim t)
+(setq ac-ignore-case nil)
+
 (provide 'starter-kit-python)
 ;; starter-kit-python.el ends here

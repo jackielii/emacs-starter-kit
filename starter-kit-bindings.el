@@ -2,7 +2,7 @@
 ;;
 ;; Part of the Emacs Starter Kit.
 ;;==================================
-;; nemo 
+;; nemo
 ;;==================================
 (global-set-key [f8] 'other-window)
 (global-set-key [f9] 'split-window-horizontally)
@@ -102,9 +102,18 @@
       (occur (if isearch-regexp isearch-string (regexp-quote isearch-string))))))
 
 ;; Org
+(global-unset-key "\C-cl")
 (define-key global-map "\C-cl" 'org-store-link)
 (define-key global-map "\C-ca" 'org-agenda)
 
 
+(global-set-key (kbd "C-<f12>") 'make-frame-command)
+(global-set-key (kbd "C-S-<f12>" ) 'delete-frame)
+
 (provide 'starter-kit-bindings)
 ;;; starter-kit-bindings.el ends here
+
+
+
+
+
